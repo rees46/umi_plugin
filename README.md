@@ -9,11 +9,11 @@ REES46 UMI CMS plugin
 3. Зайти в панель управления модулями ```/admin/config/modules/```, ввести путь до инсталляции плагина ```classes/modules/rees46/install.php```, установить
 4. Добавить права на доступ к просмотру плагина всем необходимым юзерам и группам: ```/admin/users/users_list_all/```
 5. Добавить в файл ```имя-вашего-шаблона/xslt/default.xsl``` строчку
-```xml
+```
 <xsl:include href="modules/rees46x/common.xsl" />
 ```
 6. Добавить перед закрывающим тегом ```</body>``` в шаблон ```имя-вашего-шаблона/xslt/layouts/default.xsl```
-```xml
+```
 <xsl:apply-templates select="document('udata://rees46/view/[token]')/udata" mode="right" />
 ```
 
