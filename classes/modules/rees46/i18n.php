@@ -1,9 +1,6 @@
 <?php
-/**
- * User: nixx
- * Date: 25.11.13
- * Time: 15:39
- */
 $i18n = Array(
-	'header-rees46-tree' => "Редактирование"
+    'module-rees46'		=> 'REES46 коннектор',
+    'option-shop-id' 	=> 'Идентификатр магазина',
+    'header-rees46-config' => 'Настройки REES46'
 );

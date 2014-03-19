@@ -1,81 +1,78 @@
 <?php
-/**
- * User: nixx
- * Date: 25.11.13
- * Time: 15:22
- */
 class rees46 extends def_module {
 
-	public function __construct() {
-		parent::__construct();  // Вызываем конструктор родительского класса def_module
+    const BASE_URL = 'http://api.rees46.com';
 
-		// В зависимости от режима работы системы, подключаем различные методы
-		if(cmsController::getInstance()->getCurrentMode() == "admin") {
-			// подгружаем файл с абстрактным классом __mymodule_adm для админки
-			$this->__loadLib("__admin.php");
-			// подключаем ("импортируем") методы класса __mymodule_adm
-			// для расширения функционала в режиме администрирования
-			$this->__implement("__rees46_adm");
-		} else {
-			// подгружаем файл с абстрактным классом __custom_mymodule для клиентской части
-			$this->__loadLib("__custom.php");
-			// подключаем ("импортируем") методы класса __custom_mymodule
-			// для расширения функционала в клиентском режиме
-			$this->__implement("__custom_rees46");
-		}
-//		echo "<pre>";
-//		print_r(umiHierarchy::getInstance()->getElement(umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getParentId())->getObjectId());
-//		echo "</pre>";exit;
-	}
+    public function __construct() {
+        parent::__construct();
+
+        if(cmsController::getInstance()->getCurrentMode() == "admin") {
+            # админка
+            $this->__loadLib("__admin.php");
+            $this->__implement("__rees46_admin");
+
+            $configTabs = $this->getConfigTabs();
+            if ($configTabs) {
+                $configTabs->add("config");
+            }
+
+        } else {
+            # сайт
+            $this->__loadLib("__events_handlers.php");
+            $this->__implement("__eventsHandlersEvents");
+            $this->__loadLib("Pest.php");
+            // падает при загрузке о_О
+//            $this->__loadLib("REES46.php");
+//            $this->__implement("REES46");
+
+            $this->shop_id = regedit::getInstance()->getVal("//modules/rees46/shop-id");
+            $permissions = permissionsCollection::getInstance();
+            $this->current_user_id = $permissions->getUserId();
+//            if ($this->shop_id) {
+//                $this->rees = new REES46(this->BASE_URL, $this->shop_id, $_COOKIE['rees46_session_id'], $this->current_user_id);
+//            }
+        }
+    }
 
 
-	public function view($id) {
-		// реализация метода page
-		// этот публичный метод также является макросом
-		// его можно вызвать:
-		// - "напрямую" http://example.com/mymodule/page - тогда он выполнится в дефолтном шаблоне
-		// - в tpl-шаблоне, напрмер так %mymodule page('%pid%')%
-		// - в xslt-шаблоне document('udata://mymodule/page/1234')
+    public function view() {
+        // - "напрямую" http://example.com/mymodule/page - тогда он выполнится в дефолтном шаблоне
+        // - в xslt-шаблоне document('udata://mymodule/page/1234')
 
-		$block_arr = array(
-			'widget' => array(),
-			'attribute:id' => $id
-		);
+        if( cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'object' ) {
+            $item['item_id'] = cmsController::getInstance()->getCurrentElementId();
+            $item['category'] = umiHierarchy::getInstance()->getElement(umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getParentId())->getObjectId();
+            $item['price'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getValue('price');
+        }
+        else if( cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'category' ) {
+            $item['category'] = true;
+            $item['category_id'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getObjectId();
+        }
 
-		if( cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'object' ) {
-			$block_arr['widget']['id'] = cmsController::getInstance()->getCurrentElementId();
-			$block_arr['widget']['category_id'] = umiHierarchy::getInstance()->getElement(umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getParentId())->getObjectId();
-			$block_arr['widget']['price'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getValue('price');
-		}
+//        if ($this->shop_id) {
+//            $this->rees->pushView( array( (object) $item) );
+//        }
 
-		if( cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'category' ) {
-			$block_arr['widget']['category'] = true;
-			$block_arr['widget']['category_id'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getObjectId();
-		}
-//		echo "<pre>";
-//		print_r($block_arr);
-//		echo "</pre>";exit;
-		return def_module::parseTemplate("", $block_arr, false, $id);
-	}
+    }
 
-	public function recommends() {
+    public function recommends() {
 
-		//Проверяем данные
-		if( !isset($_GET['items']) || !is_array($_GET['items']) ) {
-			exit;
-		}
+        //Проверяем данные
+        if( !isset($_GET['items']) || !is_array($_GET['items']) ) {
+            exit;
+        }
 
-		// формирование итогового массива с данными, из которых потом будет строиться select
-		$items = Array();
-		foreach($_GET['items'] as $item) {
-			$item_arr = Array();
-			$item_arr['attribute:id'] = $item;
-			$items[] = $item_arr;
-		}
+        // формирование итогового массива с данными, из которых потом будет строиться select
+        $items = Array();
+        foreach($_GET['items'] as $item) {
+            $item_arr = Array();
+            $item_arr['attribute:id'] = $item;
+            $items[] = $item_arr;
+        }
 
-		$block_arr = array("lines" => Array('nodes:item' => $items));
+        $block_arr = array("lines" => Array('nodes:item' => $items));
 
-		return $block_arr;
-	}
+        return $block_arr;
+    }
 
 }

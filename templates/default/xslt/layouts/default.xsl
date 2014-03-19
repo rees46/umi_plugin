@@ -121,7 +121,7 @@
 						</div>
 					</div>
 				</div>
-				<xsl:apply-templates select="document('udata://rees46/view/d3b7ec463691c473cb1656463d545b')/udata" mode="right" />
+				<xsl:apply-templates select="document('udata://rees46/view')/udata" />
 			</body>
 		</html>
 			</xsl:otherwise>

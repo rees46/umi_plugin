@@ -1,10 +1,7 @@
 <?php
-/**
- * User: nixx
- * Date: 25.11.13
- * Time: 15:37
- */
-$C_LANG = Array();
-$C_LANG['module_name'] = "Мой модуль";
+$C_LANG['module_name'] = "REES46";
+$C_LANG['module_title'] = "rees46";
+
+$C_LANG['events'] = "rees46";
 
 $LANG_EXPORT = Array();

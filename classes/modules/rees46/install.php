@@ -1,21 +1,13 @@
 <?php
-/**
- * User: nixx
- * Date: 25.11.13
- * Time: 15:32
- */
 $INFO = Array();
 
 $INFO['name'] = "rees46";
-$INFO['filename'] = "rees46/class.php";
-$INFO['config'] = "0";
+$INFO['title'] = "REES46";
+$INFO['filename'] = "modules/rees46/class.php";
+$INFO['config'] = "1";
 $INFO['ico'] = "ico_rees46";
-$INFO['default_method'] = "insert";
-$INFO['default_method_admin'] = "tree";
-
-$INFO['func_perms'] = "";
-$INFO['func_perms/view'] = "Просмотр баннеров";
-$INFO['func_perms/admin'] = "Администрирование модуля";
+$INFO['default_method'] = "view";
+$INFO['default_method_admin'] = "config";
 
 $COMPONENTS = array();
 

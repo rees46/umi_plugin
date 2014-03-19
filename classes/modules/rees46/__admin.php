@@ -1,48 +1,33 @@
 <?php
-/**
- * User: nixx
- * Date: 25.11.13
- * Time: 15:41
- */
-abstract class __rees46_adm extends baseModuleAdmin {
-	public function tree() {
-		//Получение id родительской страницы. Если передан неверный id, будет выброшен exception
-		$parent_id = $this->expectElementId('param0');
+abstract class __rees46_admin extends baseModuleAdmin {
 
-		$per_page = 25;
-		$curr_page = getRequest('p');
+    public function config() {
 
-		//Подготавливаем выборку
-		$sel = new selector('pages');
-		$sel->types('hierarchy-type')->name('comments', 'comment');
-		$sel->limit($per_page, $curr_page);
+        $regedit = regedit::getInstance();
+        $params = Array (
+            "config" => Array (
+                "string:shop-id" => null
+            )
+        );
 
-		// фильтр по автору
-		$filter_author_id = intval(getRequest('filter_author_id'));
-		if ($filter_author_id) {
-			$sel->where('author_id')->equals($filter_author_id);
-		}
+        $mode = getRequest("param0");
+        if ($mode == "do"){
+            if (!is_demo()) {
+                $params = $this->expectParams($params);
+                $regedit->setVar("//modules/rees46/shop-id", (string) $params["config"]["string:shop-id"]);
+                $this->chooseRedirect();
+            }
+        }
+        $params["config"]["string:shop-id"] = (string) $regedit->getVal("//modules/rees46/shop-id");
 
-		//Выполняем выборку. В $result теперь будет лежать массив id страниц - результат выборки
-		$result = $sel->result();
-		$total = $sel->length();
+        $this->setDataType("settings");
+        $this->setActionType("modify");
 
-		//Вывод данных
-		//Устанавливаем тип для вывода данных в "list" - список
-		$this->setDataType("list");
+        $data = $this->prepareData($params, "settings");
+        $this->setData($data);
 
-		//Устанавливаем действие над списокм - "view" - просмотр списка
-		$this->setActionType("view");
+        return $this->doData();
 
-		//Указываем диапозон данных
-		$this->setDataRange($per_page, $curr_page * $per_page);
+    }
 
-		//Подготавливаем данные, чтобы потом корректно их вывести
-		$data = $this->prepareData($result, "pages");
-
-		//Завершаем вывод
-		$this->setData($data, $total);
-
-		return $this->doData();
-	}
 }

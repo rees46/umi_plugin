@@ -8,6 +8,6 @@
 
 	<xsl:variable name="result" select="/result" />
 
-	<xsl:include href="widget.xsl" />
+	<xsl:include href="rees46.xsl" />
 	<xsl:include href="recommends.xsl" />
 </xsl:stylesheet>
