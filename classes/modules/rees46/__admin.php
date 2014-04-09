@@ -1,33 +1,31 @@
 <?php
-abstract class __rees46_admin extends baseModuleAdmin {
+abstract class __rees46_admin extends baseModuleAdmin
+{
+	public function config()
+	{
+		$regedit = regedit::getInstance();
+		$params = array (
+			"config" => array (
+				"string:shop-id" => null
+			)
+		);
 
-    public function config() {
+		$mode = getRequest("param0");
+		if ($mode == "do"){
+			if (!is_demo()) {
+				$params = $this->expectParams($params);
+				$regedit->setVar("//modules/rees46/shop-id", (string) $params["config"]["string:shop-id"]);
+				$this->chooseRedirect();
+			}
+		}
+		$params["config"]["string:shop-id"] = (string) $regedit->getVal("//modules/rees46/shop-id");
 
-        $regedit = regedit::getInstance();
-        $params = Array (
-            "config" => Array (
-                "string:shop-id" => null
-            )
-        );
+		$this->setDataType("settings");
+		$this->setActionType("modify");
 
-        $mode = getRequest("param0");
-        if ($mode == "do"){
-            if (!is_demo()) {
-                $params = $this->expectParams($params);
-                $regedit->setVar("//modules/rees46/shop-id", (string) $params["config"]["string:shop-id"]);
-                $this->chooseRedirect();
-            }
-        }
-        $params["config"]["string:shop-id"] = (string) $regedit->getVal("//modules/rees46/shop-id");
+		$data = $this->prepareData($params, "settings");
+		$this->setData($data);
 
-        $this->setDataType("settings");
-        $this->setActionType("modify");
-
-        $data = $this->prepareData($params, "settings");
-        $this->setData($data);
-
-        return $this->doData();
-
-    }
-
+		return $this->doData();
+	}
 }

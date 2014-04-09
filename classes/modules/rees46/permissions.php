@@ -1,6 +1,6 @@
 <?php
-$permissions = Array(
-	'view' => Array(
+$permissions = array(
+	'view' => array(
 		'rees46', 'view', 'recommends'
 	)
 );
