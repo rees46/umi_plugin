@@ -7,11 +7,6 @@
 				xmlns:xlink="http://www.w3.org/TR/xlink">
 
 	<xsl:template match="/" mode="layout">
-		<xsl:choose>
-			<xsl:when test="result[@module = 'rees46'][@method = 'recommends']">
-				<xsl:apply-templates select="document('udata://rees46/recommends')/udata" />
-			</xsl:when>
-			<xsl:otherwise>
 		<html>
 			<head>
 				<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -121,10 +116,10 @@
 						</div>
 					</div>
 				</div>
-				<xsl:apply-templates select="document('udata://rees46/view')/udata" />
+
+                <xsl:apply-templates select="document('udata://rees46/view')/udata" mode="rees46-init" />
+
 			</body>
 		</html>
-			</xsl:otherwise>
-		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

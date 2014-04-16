@@ -29,8 +29,8 @@ class rees46 extends def_module {
 
 	public function view()
 	{
-		// - "напрямую" http://example.com/mymodule/page - тогда он выполнится в дефолтном шаблоне
-		// - в xslt-шаблоне document('udata://mymodule/page/1234')
+		// - "напрямую" http://example.com/rees46/view/.xml
+		// - в xslt-шаблоне document('udata://rees46/view')
 
 		if (cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'object') {
 			$item['item_id'] = cmsController::getInstance()->getCurrentElementId();
@@ -41,7 +41,15 @@ class rees46 extends def_module {
 			$item['category_id'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getObjectId();
 		}
 
-		return array();
+		return def_module::parseTemplate("", array(
+			'shop_id' => $this->shop_id,
+			'user_id' => $this->current_user_id,
+			'type' => isset($item['item_id']) ? 'object' : (isset($item['category_id']) ? 'category' : 'none'),
+			'item_id' => isset($item['item_id']) ? $item['item_id'] : null,
+			'category' => isset($item['category']) ? $item['category'] : null,
+			'category_id' => isset($item['category_id']) ? $item['category_id'] : null,
+			'price' => isset($item['price']) ? $item['price'] : null
+		));
 	}
 
 	public function recommends()
@@ -140,7 +148,8 @@ class rees46 extends def_module {
 	private function processEvent($cookie, $newItems)
 	{
 		if (isset($_COOKIE[$cookie])) {
-			$items = json_decode($_COOKIE[$cookie]) ?: array();
+			$json = json_decode($_COOKIE[$cookie]);
+			$items = ($json ? $json : array());
 		} else {
 			$items = array();
 		}
