@@ -8,19 +8,18 @@
 
     <xsl:template match="udata" mode="rees46-init">
         <script type="text/javascript" src="//cdn.rees46.com/rees46_script2.js"></script>
+        <script type="text/javascript" src="/js/rees46.js"></script>
         <script type="text/javascript">
-            <xsl:choose>
-                <xsl:when test="type='object'">
-                    var reesReady = function() {
+            var reesReady = function() {
+                <xsl:if test="type='object'">
                     REES46.pushData("view", {
-                    "item_id": <xsl:value-of select="item_id" />,
-                    "category": <xsl:value-of select="category" />,
-                    "price": <xsl:value-of select="price" />
+                        "item_id": <xsl:value-of select="item_id" />,
+                        "category": <xsl:value-of select="category" />,
+                        "price": <xsl:value-of select="price" />
                     });
-                    }
-                </xsl:when>
-                <xsl:otherwise>var reesReady = function() {}</xsl:otherwise>
-            </xsl:choose>
+                </xsl:if>
+                window.__REES46.push(REES46);
+            }
         </script>
         <script type="text/javascript">REES46.init("<xsl:value-of select="shop_id" />", <xsl:value-of select="user_id" />, reesReady);</script>
     </xsl:template>

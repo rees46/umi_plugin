@@ -160,4 +160,10 @@ class rees46 extends def_module {
 
 		setcookie($cookie, json_encode($items), strtotime('+1 hour'), '/');
 	}
+
+	public function products_by_id()
+	{
+		$ids = $_GET['ids'];
+		// функция должна возвращать параметры продуктов
+	}
 }

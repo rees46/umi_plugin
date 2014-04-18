@@ -9,13 +9,13 @@
 ## II Отредактируйте файлы
 
 1. Добавьте в файл вашего шаблона```tempates/default/xslt/layouts/default.xsl``` перед закрывающим тегом </body> строчку:
-```xslt
-<xsl:apply-templates select="document('udata://rees46/view')/udata" mode="rees46-init" />
-```
+  ```
+    <xsl:apply-templates select="document('udata://rees46/view')/udata" mode="rees46-init" />
+  ```
 2. Добавьте в файл ```имя-вашего-шаблона/xslt/default.xsl``` строчку:
-```xslt
-<xsl:include href="modules/rees46x/common.xsl" />
-```
+  ```
+    <xsl:include href="modules/rees46x/common.xsl" />
+  ```
 
 ## III Установите модуль
 
