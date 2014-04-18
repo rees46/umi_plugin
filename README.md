@@ -8,7 +8,7 @@
 
 ## II Отредактируйте файлы
 
-1. Добавьте в файл вашего шаблона```tempates/default/xslt/layouts/default.xsl``` перед закрывающим тегом </body> строчку:
+1. Добавьте в файл вашего шаблона ```tempates/default/xslt/layouts/default.xsl``` перед закрывающим тегом body строчку:
   ```
     <xsl:apply-templates select="document('udata://rees46/view')/udata" mode="rees46-init" />
   ```
