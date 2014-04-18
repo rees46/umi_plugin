@@ -3,17 +3,17 @@
 
 ## I Скопируйте файлы
 
-1. Скопируйте директории ```classes```, ```images```, ```styles``` в корневую директорию вашего сайта
+1. Скопируйте директории ```classes```, ```images```, ```styles```, ```js``` в корневую директорию вашего сайта
 2. Скопируйте директорию ```templates/default/xslt/modules``` в соответствующую директорию вашего сайта
 
 ## II Отредактируйте файлы
 
-1. Добавьте в файл вашего шаблона ```tempates/default/xslt/layouts/default.xsl``` перед закрывающим тегом body строчку:
+1. Добавьте в файл вашего шаблона ```tempates/имя-вашего-шаблона/xslt/layouts/default.xsl``` перед закрывающим тегом body строчку:
 
   ```xslt
     <xsl:apply-templates select="document('udata://rees46/view')/udata" mode="rees46-init" />
   ```
-2. Добавьте в файл ```имя-вашего-шаблона/xslt/default.xsl``` строчку:
+2. Добавьте в файл ```templates/имя-вашего-шаблона/xslt/default.xsl``` строчку:
 
   ```xslt
     <xsl:include href="modules/rees46x/common.xsl" />
