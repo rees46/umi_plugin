@@ -21,7 +21,9 @@
                 window.__REES46.push(REES46);
             }
         </script>
-        <script type="text/javascript">REES46.init("<xsl:value-of select="shop_id" />", <xsl:value-of select="user_id" />, reesReady);</script>
+        <script type="text/javascript">
+            REES46.init("<xsl:value-of select="shop_id" />", <xsl:value-of select="user_id" />, reesReady);
+        </script>
     </xsl:template>
 
 </xsl:stylesheet>

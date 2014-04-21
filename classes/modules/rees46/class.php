@@ -1,13 +1,14 @@
 <?php
+
 class rees46 extends def_module {
 
 	const BASE_URL = 'http://api.rees46.com';
+	const PRODUCTS_PER_RECOMMENDER = 6;
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
 
-		if(cmsController::getInstance()->getCurrentMode() == 'admin') {
+		if (cmsController::getInstance()->getCurrentMode() == 'admin') {
 			# админка
 			$this->__loadLib('__admin.php');
 			$this->__implement('__rees46_admin');
@@ -27,8 +28,7 @@ class rees46 extends def_module {
 	}
 
 
-	public function view()
-	{
+	public function view() {
 		// - "напрямую" http://example.com/rees46/view/.xml
 		// - в xslt-шаблоне document('udata://rees46/view')
 
@@ -52,19 +52,18 @@ class rees46 extends def_module {
 		));
 	}
 
-	public function recommends()
-	{
+	public function recommends() {
 		//Проверяем данные
-		if( !isset($_GET['items']) || !is_array($_GET['items']) ) {
+		if (!isset($_GET['items']) || !is_array($_GET['items'])) {
 			return array();
 		}
 
 		// формирование итогового массива с данными, из которых потом будет строиться select
 		$items = array();
-		foreach($_GET['items'] as $item) {
+		foreach ($_GET['items'] as $item) {
 			$item_arr = array();
 			$item_arr['attribute:id'] = intval($item);
-			$items []= $item_arr;
+			$items [] = $item_arr;
 		}
 
 		$block_arr = array('lines' => array('nodes:item' => $items));
@@ -72,8 +71,7 @@ class rees46 extends def_module {
 		return $block_arr;
 	}
 
-	public function onOrderRefresh(iUmiEventPoint $event)
-	{
+	public function onOrderRefresh(iUmiEventPoint $event) {
 		if ($event->getMode() !== 'after') {
 			return true;
 		}
@@ -87,7 +85,8 @@ class rees46 extends def_module {
 		if (isset($items) && is_array($items)) {
 			$cart = array();
 
-			foreach ($items as $item) { /** @var optionedOrderItem @item */
+			foreach ($items as $item) {
+				/** @var optionedOrderItem @item */
 				$cart[] = $item->getItemElement()->id;
 			}
 
@@ -101,19 +100,20 @@ class rees46 extends def_module {
 		return true;
 	}
 
-	public function onOrderAdded(iUmiEventPoint $event)
-	{
+	public function onOrderAdded(iUmiEventPoint $event) {
 		if ($event->getMode() == 'after' && $event->getParam('old-status-id') != $event->getParam('new-status-id')) {
 			if ($event->getParam('new-status-id') == order::getStatusByCode('waiting') && $event->getParam("old-status-id") != order::getStatusByCode('editing')) {
 				//file_put_contents('/tmp/umi.orders.log', var_export($event->eventParams, true), FILE_APPEND);
-				$order = $event->getRef('order'); /** @var order $order */
+				$order = $event->getRef('order');
+				/** @var order $order */
 
 				$orderNumber = $order->getValue('number');
 
 				$orderItems = array();
 
-				foreach ($order->getItems() as $item) { /** @var orderItem $item */
-					$orderItems []= array(
+				foreach ($order->getItems() as $item) {
+					/** @var orderItem $item */
+					$orderItems [] = array(
 						'item_id' => $item->getItemElement()->id,
 						'price' => $item->getItemPrice(),
 						'amount' => $item->getAmount(),
@@ -130,13 +130,11 @@ class rees46 extends def_module {
 		}
 	}
 
-	public function ajax()
-	{
+	public function ajax() {
 		return array('item' => 'value');
 	}
 
-	private function processCart($newCart, $oldCart)
-	{
+	private function processCart($newCart, $oldCart) {
 		if ($newItems = array_diff($newCart, $oldCart)) {
 			$this->processEvent('rees46_track_cart', $newItems);
 		}
@@ -145,8 +143,7 @@ class rees46 extends def_module {
 		}
 	}
 
-	private function processEvent($cookie, $newItems)
-	{
+	private function processEvent($cookie, $newItems) {
 		if (isset($_COOKIE[$cookie])) {
 			$json = json_decode($_COOKIE[$cookie]);
 			$items = ($json ? $json : array());
@@ -155,15 +152,48 @@ class rees46 extends def_module {
 		}
 
 		foreach ($newItems as $itemId) {
-			$items []= array('item_id' => $itemId);
+			$items [] = array('item_id' => $itemId);
 		}
 
 		setcookie($cookie, json_encode($items), strtotime('+1 hour'), '/');
 	}
 
-	public function products_by_id()
-	{
-		$ids = $_GET['ids'];
-		// функция должна возвращать параметры продуктов
+	/**
+	 * Функция должна возвращать параметры продуктов
+	 * @return mixed
+	 */
+	public function products_by_id() {
+
+		$ids = array_slice(
+			explode(",",
+				array_pop(
+					explode("=",
+						str_replace('.json', '', $_GET['path'])
+					)
+				)
+			), 0, self::PRODUCTS_PER_RECOMMENDER);
+
+		$products = array();
+
+		foreach ($ids as $id) {
+
+			$element = umiHierarchy::getInstance()->getElement($id);
+			$title = $element->getValue('title');
+			$permalink = umiHierarchy::getInstance()->getPathById($id);
+			$image = $element->getValue('photo');
+
+			$products[$id] = array(
+				'title' => $title,
+				'permalink' => $permalink,
+				'image' => $image
+			);
+
+		}
+
+		return def_module::parseTemplate("", array(
+			'products' => $products
+		));
+
 	}
+
 }

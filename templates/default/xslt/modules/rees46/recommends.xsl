@@ -1,18 +1,23 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:template name="rees46-recommender">
+
         <xsl:param name="type" />
+        <xsl:param name="header" />
 
         <!--<xsl:apply-templates select="document('udata://emarket/cart/')/udata/items" mode="rees46-cart" />-->
 
-        <h1>Заголовок рекоммендера</h1>
+        <h1><xsl:value-of select="$header" /></h1>
+
         <div id="recommender_{$type}"></div>
+
         <script type="text/javascript">
             if (window.rees46_recommenders === undefined) {
             window.rees46_recommenders = []
             }
             window.rees46_recommenders.push('<xsl:value-of select="$type" />')
         </script>
+
     </xsl:template>
 
 
