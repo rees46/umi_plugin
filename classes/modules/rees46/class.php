@@ -27,6 +27,40 @@ class rees46 extends def_module {
 		}
 	}
 
+	public function view_tpls() {
+
+		list($template_block) = def_module::loadTemplates("rees46/default", "view");
+
+		if (cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'object') {
+			$item['item_id'] = cmsController::getInstance()->getCurrentElementId();
+			$item['category'] = umiHierarchy::getInstance()->getElement(umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getParentId())->getObjectId();
+			$item['price'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getValue('price');
+		} elseif (cmsController::getInstance()->getCurrentModule() == 'catalog' && cmsController::getInstance()->getCurrentMethod() == 'category') {
+			$item['category'] = true;
+			$item['category_id'] = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())->getObjectId();
+		}
+
+		return self::parseTemplate($template_block, array(
+			'shop_id' => $this->shop_id,
+			'user_id' => $this->current_user_id,
+			'type' => isset($item['item_id']) ? 'object' : (isset($item['category_id']) ? 'category' : 'none'),
+			'item_id' => isset($item['item_id']) ? $item['item_id'] : null,
+			'category' => isset($item['category']) ? $item['category'] : null,
+			'category_id' => isset($item['category_id']) ? $item['category_id'] : null,
+			'price' => isset($item['price']) ? $item['price'] : null
+		));
+	}
+
+	public function recommend_tpls($type, $header) {
+
+		list($template_block) = def_module::loadTemplates("rees46/default", "recommend");
+
+		return self::parseTemplate($template_block, array(
+			'type' => $type,
+			'header' => $header
+		));
+
+	}
 
 	public function view() {
 		// - "напрямую" http://example.com/rees46/view/.xml
