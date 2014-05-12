@@ -1,3 +1,5 @@
+Актуальная инструкция: http://memo.mkechinov.ru/pages/viewpage.action?pageId=786461
+
 # Инструкция по интеграции UMI CMS с REES46
 ==========
 
