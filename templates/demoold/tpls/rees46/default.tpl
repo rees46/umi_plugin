@@ -25,17 +25,21 @@ END;
 
 $FORMS['recommend'] = <<<END
 
+	<div class="recommender-wrapper">
 		<h1>%header%</h1>
 
-        <div id="recommender_%type%"></div>
+		<div id="recommender_%type%"></div>
 
-        <script type="text/javascript">
-            if (window.rees46_recommenders === undefined) {
-            window.rees46_recommenders = []
-            }
-            window.rees46_recommenders.push('%type%')
-        </script>
+		<script type="text/javascript">
 
+			if (window.rees46_recommenders === undefined) {
+				window.rees46_recommenders = [];
+			}
+
+			window.rees46_recommenders.push({type:'%type%',category:%category_id%,item:%item_id%,cart:%cart%});
+
+		</script>
+	</div>
 
 END;
 

@@ -34,12 +34,23 @@ window.__REES46 = {
         }
 
         var i, rec = window.rees46_recommenders;
+
         for (i = 0; i <= rec.length; i++) {
-            type = rec[i];
+
+            if (!rec[i]) {
+                continue;
+            }
+
+            type = rec[i].type;
+
             var recommender = {
                 recommender_type: type,
-                limit: __REES46.PRODUCTS_PER_RECOMMENDER
+                limit: __REES46.PRODUCTS_PER_RECOMMENDER,
+                item: rec[i].item,
+                cart: rec[i].cart,
+                category: rec[i].category
             };
+
             // т.к. рекоммендер не сообщает свой тип callback-функции,
             // указываем разные функции в качестве callback
             switch (type) {
@@ -72,12 +83,16 @@ window.__REES46 = {
             // получение данных по продуктам
             jQuery.getJSON('/udata/rees46/products_by_id.json?ids=' + ids.join(',') + '.json', jQuery.proxy(function (data) {
 
+                var foundProducts = false;
+                var selector = $('#recommender_' + type);
+
                 if (data) {
 
                     var items = '';
-                    var selector = $('#recommender_' + type);
 
                     $.each(data.products, function (id, product) {
+
+                        foundProducts = true;
 
                         if (product.title) {
                             items += __REES46.tpl_item.format(
@@ -92,6 +107,10 @@ window.__REES46 = {
                     items = __REES46.tpl_items.format(items);
                     selector.html(items);
 
+                }
+
+                if (foundProducts == true) {
+                    selector.parent().fadeIn(100);
                 }
 
             }, jQuery('#' + type)));

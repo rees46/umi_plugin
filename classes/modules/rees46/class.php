@@ -1,11 +1,17 @@
 <?php
-
+/**
+ * Class rees46
+ */
 class rees46 extends def_module {
 
 	const BASE_URL = 'http://api.rees46.com';
 	const PRODUCTS_PER_RECOMMENDER = 6;
 
+	/**
+	 * Конструктор
+	 */
 	public function __construct() {
+
 		parent::__construct();
 
 		if (cmsController::getInstance()->getCurrentMode() == 'admin') {
@@ -27,6 +33,10 @@ class rees46 extends def_module {
 		}
 	}
 
+	/**
+	 * Просмотр страницы в tpls шаблоне
+	 * @return mixed
+	 */
 	public function view_tpls() {
 
 		list($template_block) = def_module::loadTemplates("rees46/default", "view");
@@ -51,18 +61,37 @@ class rees46 extends def_module {
 		));
 	}
 
+	/**
+	 * Показать блок с рекоммендером в tpls шаблоне
+	 * @todo: получить айдишники товаров в корзине $cartElementIds
+	 * @param $type
+	 * @param $header
+	 * @return mixed
+	 */
 	public function recommend_tpls($type, $header) {
 
 		list($template_block) = def_module::loadTemplates("rees46/default", "recommend");
 
+		$cartElementIds = array();
+
 		return self::parseTemplate($template_block, array(
 			'type' => $type,
-			'header' => $header
+			'header' => $header,
+			'item_id' => "'" . cmsController::getInstance()->getCurrentElementId() . "'",
+			'category_id' => "'" . umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())
+					->getObjectId() . "'",
+			'cart' => '[' . implode(",", $cartElementIds) . ']'
+
 		));
 
 	}
 
+	/**
+	 * Просмотр страницы в xslt шаблоне
+	 * @return mixed
+	 */
 	public function view() {
+
 		// - "напрямую" http://example.com/rees46/view/.xml
 		// - в xslt-шаблоне document('udata://rees46/view')
 
@@ -84,8 +113,13 @@ class rees46 extends def_module {
 			'category_id' => isset($item['category_id']) ? $item['category_id'] : null,
 			'price' => isset($item['price']) ? $item['price'] : null
 		));
+
 	}
 
+	/**
+	 *
+	 * @return array
+	 */
 	public function recommends() {
 		//Проверяем данные
 		if (!isset($_GET['items']) || !is_array($_GET['items'])) {
@@ -105,7 +139,12 @@ class rees46 extends def_module {
 		return $block_arr;
 	}
 
+	/**
+	 * @param iUmiEventPoint $event
+	 * @return bool
+	 */
 	public function onOrderRefresh(iUmiEventPoint $event) {
+
 		if ($event->getMode() !== 'after') {
 			return true;
 		}
@@ -134,8 +173,13 @@ class rees46 extends def_module {
 		return true;
 	}
 
+	/**
+	 * @param iUmiEventPoint $event
+	 */
 	public function onOrderAdded(iUmiEventPoint $event) {
+
 		if ($event->getMode() == 'after' && $event->getParam('old-status-id') != $event->getParam('new-status-id')) {
+
 			if ($event->getParam('new-status-id') == order::getStatusByCode('waiting') && $event->getParam("old-status-id") != order::getStatusByCode('editing')) {
 				//file_put_contents('/tmp/umi.orders.log', var_export($event->eventParams, true), FILE_APPEND);
 				$order = $event->getRef('order');
@@ -160,14 +204,17 @@ class rees46 extends def_module {
 				);
 
 				setcookie('rees46_track_purchase', json_encode($order), strtotime('+1 hour'), '/');
+
 			}
+
 		}
+
 	}
 
-	public function ajax() {
-		return array('item' => 'value');
-	}
-
+	/**
+	 * @param $newCart
+	 * @param $oldCart
+	 */
 	private function processCart($newCart, $oldCart) {
 		if ($newItems = array_diff($newCart, $oldCart)) {
 			$this->processEvent('rees46_track_cart', $newItems);
@@ -177,6 +224,10 @@ class rees46 extends def_module {
 		}
 	}
 
+	/**
+	 * @param $cookie
+	 * @param $newItems
+	 */
 	private function processEvent($cookie, $newItems) {
 		if (isset($_COOKIE[$cookie])) {
 			$json = json_decode($_COOKIE[$cookie]);
