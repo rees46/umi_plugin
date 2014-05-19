@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class rees46
  */
@@ -74,12 +75,26 @@ class rees46 extends def_module {
 
 		$cartElementIds = array();
 
+		$emarket = cmsController::getInstance()->getModule("emarket");
+		$order = $emarket->getBasketOrder(false);
+		if (empty($order) == false) {
+			$items = $order->getItems();
+			foreach ($items as $item) {
+				$cartElementIds[] = $item->id;
+			}
+		}
+
+		$objectId = "";
+		$object = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId());
+		if (empty($object) == false) {
+			$objectId = $object->getObjectId();
+		}
+
 		return self::parseTemplate($template_block, array(
 			'type' => $type,
 			'header' => $header,
 			'item_id' => "'" . cmsController::getInstance()->getCurrentElementId() . "'",
-			'category_id' => "'" . umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId())
-					->getObjectId() . "'",
+			'category_id' => "'" . $objectId . "'",
 			'cart' => '[' . implode(",", $cartElementIds) . ']'
 
 		));
@@ -216,9 +231,11 @@ class rees46 extends def_module {
 	 * @param $oldCart
 	 */
 	private function processCart($newCart, $oldCart) {
+
 		if ($newItems = array_diff($newCart, $oldCart)) {
 			$this->processEvent('rees46_track_cart', $newItems);
 		}
+
 		if ($removedItems = array_diff($oldCart, $newCart)) {
 			$this->processEvent('rees46_track_remove_from_cart', $removedItems);
 		}
@@ -235,6 +252,8 @@ class rees46 extends def_module {
 		} else {
 			$items = array();
 		}
+
+		$newItems = array_filter($newItems);
 
 		foreach ($newItems as $itemId) {
 			$items [] = array('item_id' => $itemId);
