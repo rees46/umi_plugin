@@ -25,7 +25,7 @@ END;
 
 $FORMS['recommend'] = <<<END
 
-	<div class="recommender-wrapper">
+	<div class="recommender-wrapper rees46-recommend">
 		<h1>%header%</h1>
 
 		<div id="recommender_%type%"></div>

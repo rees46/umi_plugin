@@ -85,15 +85,19 @@ class rees46 extends def_module {
 		}
 
 		$objectId = "";
-		$object = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId());
-		if (empty($object) == false) {
-			$objectId = $object->getObjectId();
+		$itemId = "";
+		if (empty($_GET['path']) == false) {
+			$object = umiHierarchy::getInstance()->getElement(cmsController::getInstance()->getCurrentElementId());
+			if (empty($object) == false) {
+				$objectId = $object->getObjectId();
+			}
+			$itemId = cmsController::getInstance()->getCurrentElementId();
 		}
 
 		return self::parseTemplate($template_block, array(
 			'type' => $type,
 			'header' => $header,
-			'item_id' => "'" . cmsController::getInstance()->getCurrentElementId() . "'",
+			'item_id' => "'" . $itemId . "'",
 			'category_id' => "'" . $objectId . "'",
 			'cart' => '[' . implode(",", $cartElementIds) . ']'
 
@@ -282,14 +286,19 @@ class rees46 extends def_module {
 		foreach ($ids as $id) {
 
 			$element = umiHierarchy::getInstance()->getElement($id);
-			$title = $element->getValue('title');
+			$title = $element->getName();
 			$permalink = umiHierarchy::getInstance()->getPathById($id);
 			$image = $element->getValue('photo');
+			$description = $element->getValue('short_description');
+			$emarket = cmsController::getInstance()->getModule("emarket");
+			$price = $emarket->getPrice($element);
 
 			$products[$id] = array(
 				'title' => $title,
+				'description' => $description,
 				'permalink' => $permalink,
-				'image' => $image
+				'image' => $image,
+				'price' => $price
 			);
 
 		}

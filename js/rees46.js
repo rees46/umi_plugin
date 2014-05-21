@@ -16,13 +16,18 @@ window.__REES46 = {
 
     _obj: null,
     tpl_items: '<div class="recommended-items">{0}</div>',
-    tpl_item: '<div class="recommended-item">' +
+    tpl_item: '<div class="recommended-item cat_item">' +
         '<div class="recommended-item-photo">' +
         '<a href="{0}"><img src="{2}" class="item_img" /></a>' +
         '</div>' +
+        '<div class="cat_item_text">{5}</div>'+
         '<div class="recommended-item-title">' +
         '<a href="{0}">{1}</a>' +
         '</div>' +
+        '<span class="cat_item_price">' +
+        '<span umi:element-id="66" umi:field-name="price">{4}</span> р.' +
+        '</span>' +
+        '<a href="{3}" class="button">В корзину</a>' +
         '</div>',
 
     push: function (obj) {
@@ -98,7 +103,10 @@ window.__REES46 = {
                             items += __REES46.tpl_item.format(
                                 product.permalink + '?recommended_by=' + type,
                                 product.title,
-                                product.image.src
+                                product.image.src,
+                                '/emarket/basket/put/element/' + id + '/?recommended_by=' + type,
+                                product.price,
+                                product.description
                             );
                         }
 
