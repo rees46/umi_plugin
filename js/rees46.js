@@ -15,19 +15,22 @@ window.__REES46 = {
     PRODUCTS_PER_RECOMMENDER: 6,
 
     _obj: null,
-    tpl_items: '<div class="recommended-items">{0}</div>',
+    tpl_items: '<div class="rees46-recommend">' +
+		'<div class="recommender-block-title">Возможно, вам это будет интересно</div>' +
+		'<div class="recommended-items">{0}</div>' +
+		'</div>',
     tpl_item: '<div class="recommended-item cat_item">' +
         '<div class="recommended-item-photo">' +
-        '<a href="{0}"><img src="{2}" class="item_img" /></a>' +
+        '<a href="{0}"><img src="{2}" class="item_img" alt="Товар" /></a>' +
         '</div>' +
         '<div class="cat_item_text">{5}</div>'+
         '<div class="recommended-item-title">' +
         '<a href="{0}">{1}</a>' +
         '</div>' +
-        '<span class="cat_item_price">' +
+        '<div class="recommended-item-price">' +
         '<span umi:element-id="66" umi:field-name="price">{4}</span> р.' +
-        '</span>' +
-        '<a href="{3}" class="button">В корзину</a>' +
+        '</div>' +
+        '<div class="recommended-item-action"><a href="{0}" class="button">Подробнее</a></div>' +
         '</div>',
 
     push: function (obj) {
@@ -113,6 +116,10 @@ window.__REES46 = {
                     });
 
                     items = __REES46.tpl_items.format(items);
+										if (REES46.showPromotion) {
+										// Эта функция возвращает верстку рекламной строчки, она должна быть в самом конце контента блока
+											items = items + REES46.getPromotionBlock();
+										}
                     selector.html(items);
 
                 }

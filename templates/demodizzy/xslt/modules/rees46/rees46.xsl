@@ -11,6 +11,7 @@
         <script type="text/javascript" src="/js/rees46.js"></script>
         <script type="text/javascript">
             var reesReady = function() {
+								REES46.addStyleToPage();
                 <xsl:if test="type='object'">
                     REES46.pushData("view", {
                         "item_id": <xsl:value-of select="item_id" />,
