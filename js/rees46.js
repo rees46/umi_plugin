@@ -16,14 +16,12 @@ window.__REES46 = {
 
     _obj: null,
     tpl_items: '<div class="rees46-recommend">' +
-		'<div class="recommender-block-title">Возможно, вам это будет интересно</div>' +
 		'<div class="recommended-items">{0}</div>' +
 		'</div>',
     tpl_item: '<div class="recommended-item cat_item">' +
         '<div class="recommended-item-photo">' +
         '<a href="{0}"><img src="{2}" class="item_img" alt="Товар" /></a>' +
         '</div>' +
-        '<div class="cat_item_text">{5}</div>'+
         '<div class="recommended-item-title">' +
         '<a href="{0}">{1}</a>' +
         '</div>' +

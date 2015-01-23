@@ -2,7 +2,7 @@
 $INFO = Array();
 
 $INFO['name'] = 'rees46';
-$INFO['title'] = 'REES46';
+$INFO['title'] = 'rees46';
 $INFO['filename'] = 'modules/rees46/class.php';
 $INFO['config'] = '1';
 $INFO['ico'] = 'ico_rees46';

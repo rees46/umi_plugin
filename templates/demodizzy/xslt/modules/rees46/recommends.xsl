@@ -4,6 +4,7 @@
 
         <xsl:param name="type"/>
         <xsl:param name="header"/>
+        <xsl:param name="item"/>
 
         <!--<xsl:apply-templates select="document('udata://emarket/cart/')/udata/items" mode="rees46-cart" />-->
 
@@ -19,7 +20,7 @@
                 if (window.rees46_recommenders === undefined) {
                 window.rees46_recommenders = []
                 }
-                window.rees46_recommenders.push({type:'<xsl:value-of select="$type"/>'})
+                window.rees46_recommenders.push({type:'<xsl:value-of select="$type"/>', item: '<xsl:value-of select="$item"/>'})
             </script>
         </div>
 
