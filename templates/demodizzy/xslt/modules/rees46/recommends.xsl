@@ -10,10 +10,6 @@
 
         <div class="recommender-wrapper">
 
-            <h1>
-                <xsl:value-of select="$header"/>
-            </h1>
-
             <div id="recommender_{$type}"></div>
 
             <script type="text/javascript">

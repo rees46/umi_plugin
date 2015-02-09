@@ -31,6 +31,11 @@ class rees46 extends def_module {
 			$this->shop_id = regedit::getInstance()->getVal("//modules/rees46/shop-id");
 			$permissions = permissionsCollection::getInstance();
 			$this->current_user_id = $permissions->getUserId();
+
+			if( $this->current_user_id ) {
+				$collection = umiObjectsCollection::getInstance();
+				$this->current_user = $collection->getObject( $this->current_user_id );
+			}
 		}
 	}
 
@@ -54,6 +59,7 @@ class rees46 extends def_module {
 		return self::parseTemplate($template_block, array(
 			'shop_id' => $this->shop_id,
 			'user_id' => $this->current_user_id,
+			'email' => $this->current_user ? $this->current_user->getValue('e-mail') : null,
 			'type' => isset($item['item_id']) ? 'object' : (isset($item['category_id']) ? 'category' : 'none'),
 			'item_id' => isset($item['item_id']) ? $item['item_id'] : null,
 			'category' => isset($item['category']) ? $item['category'] : null,
@@ -126,6 +132,7 @@ class rees46 extends def_module {
 		return def_module::parseTemplate("", array(
 			'shop_id' => $this->shop_id,
 			'user_id' => $this->current_user_id,
+			'email' => $this->current_user ? $this->current_user->getValue('e-mail') : null,
 			'type' => isset($item['item_id']) ? 'object' : (isset($item['category_id']) ? 'category' : 'none'),
 			'item_id' => isset($item['item_id']) ? $item['item_id'] : null,
 			'category' => isset($item['category']) ? $item['category'] : null,
@@ -286,6 +293,9 @@ class rees46 extends def_module {
 		foreach ($ids as $id) {
 
 			$element = umiHierarchy::getInstance()->getElement($id);
+			if( $element == null ) {
+				continue;
+			}
 			$title = $element->getName();
 			$permalink = umiHierarchy::getInstance()->getPathById($id);
 			$image = $element->getValue('photo');

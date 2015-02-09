@@ -16,6 +16,7 @@ window.__REES46 = {
 
     _obj: null,
     tpl_items: '<div class="rees46-recommend">' +
+		'<div class="recommender-block-title">{1}</div>' +
 		'<div class="recommended-items">{0}</div>' +
 		'</div>',
     tpl_item: '<div class="recommended-item cat_item">' +
@@ -47,7 +48,7 @@ window.__REES46 = {
                 continue;
             }
 
-            type = rec[i].type;
+            var type = rec[i].type;
 
             var recommender = {
                 recommender_type: type,
@@ -59,26 +60,11 @@ window.__REES46 = {
 
             // т.к. рекоммендер не сообщает свой тип callback-функции,
             // указываем разные функции в качестве callback
-            switch (type) {
-                case 'interesting':
-                    obj.recommend(recommender, __REES46.recommendInteresting);
-                    break;
-                case 'also_bought':
-                    obj.recommend(recommender, __REES46.recommendAlso_bought);
-                    break;
-                case 'similar':
-                    obj.recommend(recommender, __REES46.recommendSimilar);
-                    break;
-                case 'popular':
-                    obj.recommend(recommender, __REES46.recommendPopular);
-                    break;
-                case 'see_also':
-                    obj.recommend(recommender, __REES46.recommendSee_also);
-                    break;
-                case 'recently_viewed':
-                    obj.recommend(recommender, __REES46.recommendRecently_viewed);
-                    break;
-            }
+					obj.recommend(recommender, function(type) {
+						return function(data) {
+							return window.__REES46.recommendByType(type, data);
+						}
+					}(type));
         }
     },
 
@@ -90,9 +76,33 @@ window.__REES46 = {
             jQuery.getJSON('/udata/rees46/products_by_id.json?ids=' + ids.join(',') + '.json', jQuery.proxy(function (data) {
 
                 var foundProducts = false;
-                var selector = $('#recommender_' + type);
+                var selector = $('#recommender_' + type), title;
 
-                if (data) {
+							switch (type) {
+								case 'interesting':
+									title = 'Возможно, вам это понравится';
+									break;
+								case 'also_bought':
+									title = 'С этим товаром покупают';
+									break;
+								case 'similar':
+									title = 'Похожие товары';
+									break;
+								case 'popular':
+									title = 'Популярные товары';
+									break;
+								case 'see_also':
+									title = 'Посмотрите также';
+									break;
+								case 'recently_viewed':
+									title = 'Вы недавно смотрели';
+									break;
+								case 'buying_now':
+									title = 'Прямо сейчас покупают';
+									break;
+							}
+
+                if (data && data.products && Object.keys(data.products).length >= 3) {
 
                     var items = '';
 
@@ -104,7 +114,7 @@ window.__REES46 = {
                             items += __REES46.tpl_item.format(
                                 product.permalink + '?recommended_by=' + type,
                                 product.title,
-                                product.image.src,
+																product.image ?product.image.src : null,
                                 '/emarket/basket/put/element/' + id + '/?recommended_by=' + type,
                                 product.price,
                                 product.description
@@ -113,7 +123,7 @@ window.__REES46 = {
 
                     });
 
-                    items = __REES46.tpl_items.format(items);
+                    items = __REES46.tpl_items.format(items, title);
 										if (REES46.showPromotion) {
 										// Эта функция возвращает верстку рекламной строчки, она должна быть в самом конце контента блока
 											items = items + REES46.getPromotionBlock();
@@ -130,25 +140,5 @@ window.__REES46 = {
 
         }
 
-    },
-
-    recommendInteresting: function (data) {
-        window.__REES46.recommendByType('interesting', data);
-    },
-    recommendAlso_bought: function (data) {
-        window.__REES46.recommendByType('also_bought', data);
-    },
-    recommendSimilar: function (data) {
-        window.__REES46.recommendByType('similar', data);
-    },
-    recommendPopular: function (data) {
-        window.__REES46.recommendByType('popular', data);
-    },
-    recommendSee_also: function (data) {
-        window.__REES46.recommendByType('see_also', data);
-    },
-    recommendRecently_viewed: function (data) {
-        window.__REES46.recommendByType('recently_viewed', data);
     }
-
-}
+};

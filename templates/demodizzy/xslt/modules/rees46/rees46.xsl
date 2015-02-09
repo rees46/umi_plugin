@@ -23,7 +23,7 @@
             }
         </script>
         <script type="text/javascript">
-            REES46.init("<xsl:value-of select="shop_id" />", <xsl:value-of select="user_id" />, reesReady);
+            REES46.init("<xsl:value-of select="shop_id" />", {"id": "<xsl:value-of select="user_id" />", "email": "<xsl:value-of select="email" />"}, reesReady);
         </script>
     </xsl:template>
 
